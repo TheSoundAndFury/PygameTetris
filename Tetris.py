@@ -138,7 +138,7 @@ shape_colors = [(0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0), (255, 16
 
 # index 0 - 6 represent shape
 
-
+# class to define the piece object.
 class Piece(object):
     def __init__(self, x, y, shape):
         self.x = x
@@ -148,6 +148,7 @@ class Piece(object):
         self.rotation = 0
 
 
+# Create the grid object
 def create_grid(locked_positions={}):
     grid = [[(0, 0, 0) for x in range(10)] for x in range(20)]
 
@@ -160,6 +161,7 @@ def create_grid(locked_positions={}):
     return grid
 
 
+#
 def convert_shape_format(shape):
     positions = []
     format = shape.shape[shape.rotation % len(shape.shape)]
@@ -176,6 +178,7 @@ def convert_shape_format(shape):
     return positions
 
 
+# checks whether or not the piece is being moved into an open space
 def valid_space(shape, grid):
     accepted_positions = [[(j, i) for j in range(10) if grid[i][j] == (0, 0, 0)] for i in range(20)]
     accepted_positions = [j for sub in accepted_positions for j in sub]
@@ -189,6 +192,7 @@ def valid_space(shape, grid):
     return True
 
 
+# Check if we lost the game i.e: piece is over the top of the grid.
 def check_lost(positions):
     for pos in positions:
         x, y = pos
@@ -198,18 +202,21 @@ def check_lost(positions):
     return False
 
 
+# Create a Piece object.
 def get_shape():
     return Piece(5, 0, random.choice(shapes))
 
 
+# Draw text in the middle of the screen.
 def draw_text_middle(surface, text, size, color):
     font = pygame.font.SysFont("comicsans", size, bold=True)
     label = font.render(text, 1, color)
 
     surface.blit(label, (
-    top_left_x + play_width / 2 - (label.get_width() / 2), top_left_y + play_height / 2 - label.get_height() / 2))
+        top_left_x + play_width / 2 - (label.get_width() / 2), top_left_y + play_height / 2 - label.get_height() / 2))
 
 
+# Draw lines on the grid
 def draw_grid(surface, grid):
     sx = top_left_x
     sy = top_left_y
@@ -219,6 +226,10 @@ def draw_grid(surface, grid):
         for j in range(len(grid[i])):
             pygame.draw.line(surface, (128, 128, 128), (sx + j * block_size, sy),
                              (sx + j * block_size, sy + play_height))
+
+
+# Check if we have a full row, delete that row and shift the
+# rows above down while creating a new blank row at the top.
 
 
 def clear_rows(grid, locked):
@@ -244,6 +255,9 @@ def clear_rows(grid, locked):
     return inc
 
 
+# Draw the next shape piece.
+
+
 def draw_next_shape(shape, surface):
     font = pygame.font.SysFont('comicsans', 30)
     label = font.render('Next Shape:', 1, (255, 255, 255))
@@ -262,6 +276,8 @@ def draw_next_shape(shape, surface):
     surface.blit(label, (sx + 10, sy - 30))
 
 
+# Write our new score to our txt file.
+
 def update_score(nscore):
     score = max_score()
 
@@ -271,6 +287,8 @@ def update_score(nscore):
         else:
             f.write(str(nscore))
 
+
+# Get the max score from our file.
 def max_score():
     with open('scores.txt', 'r') as f:
         lines = f.readlines()
@@ -279,6 +297,7 @@ def max_score():
     return score
 
 
+# Draw the entire window object
 def draw_window(surface, grid, score=0, last_score=0):
     surface.fill((0, 0, 0))
 
@@ -297,7 +316,7 @@ def draw_window(surface, grid, score=0, last_score=0):
 
     surface.blit(label, (sx + 30, sy + 160))
 
-    #High Score
+    # High Score
     font = pygame.font.SysFont('comicsans', 30)
     label = font.render('High Score:' + str(last_score), 1, (255, 255, 255))
 
@@ -316,6 +335,7 @@ def draw_window(surface, grid, score=0, last_score=0):
     # pygame.display.update()
 
 
+# Main Game Loop
 def main(win):
     last_score = max_score()
     locked_positions = {}
@@ -404,6 +424,7 @@ def main(win):
             update_score(score)
 
 
+# Class for menu actions
 def main_menu(win):
     run = True
     while run:
@@ -417,7 +438,6 @@ def main_menu(win):
                 main(win)
 
     pygame.display.quit()
-
 
     main(win)
 
